@@ -83,6 +83,7 @@
                 inherit pkgs;
                 inherit (self.legacyPackages.${system}) makeNixvimWithModule;
               };
+              line-len = import ./tests/check-line-len.nix {inherit self pkgs;};
               pre-commit-check = pre-commit-hooks.lib.${system}.run {
                 src = ./.;
                 hooks = {
