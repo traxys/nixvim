@@ -19,7 +19,7 @@ jobs:
         # This allows to update both stable & unstable branches, but not both when triggered
         # manually
         branch: ['main', 'nixos-23.11']
-        selectedBranch: "${{ inputs.branch }}"
+        selectedBranch: ["${{ inputs.branch }}"]
         exclude:
           - selectedBranch: main
             branch: 'nixos-23.11'
