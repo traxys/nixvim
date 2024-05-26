@@ -6,6 +6,7 @@ on:
         description: "Branch to update"
         type: choice
         options:
+          - 'stable & unstable'
           - 'main'
           - 'nixos-23.11'
   schedule:
