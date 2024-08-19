@@ -38,7 +38,8 @@ helpers.neovim-plugin.mkNeovimPlugin config {
 
   callSetup = false;
   extraConfig = cfg: {
-    extraConfigLua = ''
+    extraConfigLua = cfg.config.final;
+    plugins.hydra.config.init = ''
       hydra = require('hydra')
 
       hydra.setup(${helpers.toLuaObject cfg.settings})

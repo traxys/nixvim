@@ -40,10 +40,11 @@ helpers.neovim-plugin.mkNeovimPlugin config {
   };
 
   extraConfig = cfg: {
-    extraConfigLuaPre = ''
+    colorschemes.ayu.config.init = ''
       local ayu = require("ayu")
       ayu.setup(${helpers.toLuaObject cfg.settings})
       ayu.colorscheme()
     '';
+    extraConfigLuaPre = cfg.config.final;
   };
 }

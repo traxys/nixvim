@@ -52,11 +52,6 @@ helpers.neovim-plugin.mkNeovimPlugin config {
   callSetup = false;
   extraConfig =
     cfg:
-    let
-      configStr = ''
-        vim.g.rustaceanvim = ${helpers.toLuaObject cfg.settings}
-      '';
-    in
     mkMerge [
       {
         extraPackages = [ cfg.rustAnalyzerPackage ];
@@ -74,6 +69,9 @@ helpers.neovim-plugin.mkNeovimPlugin config {
               Note that if you supplied an attrset and not a function you need to set this attr set in:
                 `plugins.rustaceanvim.settings.server.default_settings.rust-analyzer'.
             '';
+        plugins.rustaceanvim.config.init = ''
+          vim.g.rustaceanvim = ${helpers.toLuaObject cfg.settings}
+        '';
       }
       # If nvim-lspconfig is enabled:
       (mkIf config.plugins.lsp.enable {
@@ -82,9 +80,9 @@ helpers.neovim-plugin.mkNeovimPlugin config {
 
         # Ensure the plugin config is placed **after** the rest of the LSP configuration
         # (and thus after the declaration of `__lspOnAttach`)
-        plugins.lsp.postConfig = configStr;
+        plugins.lsp.postConfig = cfg.config.final;
       })
       # Else, just put the plugin config anywhere
-      (mkIf (!config.plugins.lsp.enable) { extraConfigLua = configStr; })
+      (mkIf (!config.plugins.lsp.enable) { extraConfigLua = cfg.config.final; })
     ];
 }

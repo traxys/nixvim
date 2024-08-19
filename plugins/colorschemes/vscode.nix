@@ -34,10 +34,12 @@ helpers.neovim-plugin.mkNeovimPlugin config {
   };
 
   extraConfig = cfg: {
-    extraConfigLuaPre = ''
+    colorschemes.vscode.config.init = ''
       local _vscode = require("vscode")
       _vscode.setup(${helpers.toLuaObject cfg.settings})
       _vscode.load()
     '';
+
+    extraConfigLuaPre = cfg.config.final;
   };
 }

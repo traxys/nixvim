@@ -193,8 +193,10 @@ nixvim.neovim-plugin.mkNeovimPlugin config {
 
   extraConfig = cfg: {
     globals.lz_n = modules.mkAliasAndWrapDefsWithPriority id options.plugins.lz-n.settings;
-    extraConfigLua = mkIf (cfg.plugins != [ ]) ''
+    plugins.lz-n.config.init = mkIf (cfg.plugins != [ ]) ''
       require('lz.n').load( ${nixvim.toLuaObject cfg.plugins})
     '';
+
+    extraConfigLua = cfg.config.final;
   };
 }

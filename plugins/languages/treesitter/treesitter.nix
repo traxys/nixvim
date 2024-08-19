@@ -296,7 +296,7 @@ helpers.neovim-plugin.mkNeovimPlugin config {
   installPackage = false;
 
   extraConfig = cfg: {
-    extraConfigLua =
+    plugins.treesitter.config.init =
       # NOTE: Upstream state that the parser MUST be at the beginning of runtimepath.
       # Otherwise the parsers from Neovim takes precedent, which may be incompatible with some queries.
       (optionalString (cfg.settings.parser_install_dir != null) ''
@@ -314,6 +314,8 @@ helpers.neovim-plugin.mkNeovimPlugin config {
           end
         end
       '');
+
+    extraConfigLua = cfg.config.final;
 
     extraFiles = mkIf cfg.nixvimInjections { "queries/nix/injections.scm".source = ./injections.scm; };
 

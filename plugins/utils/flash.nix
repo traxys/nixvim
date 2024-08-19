@@ -11,6 +11,7 @@ helpers.neovim-plugin.mkNeovimPlugin config {
   originalName = "flash.nvim";
   defaultPackage = pkgs.vimPlugins.flash-nvim;
 
+  skipConfigAttrs = true;
   maintainers = with maintainers; [
     traxys
     MattSturgeon

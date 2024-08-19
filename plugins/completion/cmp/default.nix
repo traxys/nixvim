@@ -32,7 +32,7 @@ helpers.neovim-plugin.mkNeovimPlugin config {
 
   callSetup = false;
   extraConfig = cfg: {
-    extraConfigLua =
+    plugins.cmp.config.init =
       ''
         local cmp = require('cmp')
         cmp.setup(${helpers.toLuaObject cfg.settings})
@@ -48,5 +48,7 @@ helpers.neovim-plugin.mkNeovimPlugin config {
           cmdtype: settings: "cmp.setup.cmdline('${cmdtype}', ${helpers.toLuaObject settings})\n"
         ) cfg.cmdline
       ));
+
+    extraConfigLua = cfg.config.final;
   };
 }

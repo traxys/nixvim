@@ -104,7 +104,7 @@ helpers.neovim-plugin.mkNeovimPlugin config {
       }
     ) cfg.keymaps;
 
-    extraConfigLua = ''
+    plugins.telescope.config.init = ''
       require('telescope').setup(${helpers.toLuaObject cfg.settings})
 
       local __telescopeExtensions = ${helpers.toLuaObject cfg.enabledExtensions}
@@ -112,6 +112,8 @@ helpers.neovim-plugin.mkNeovimPlugin config {
         require('telescope').load_extension(extension)
       end
     '';
+
+    extraConfigLua = cfg.config.final;
 
     # planets picker requires files in data/memes/planets
     performance.combinePlugins.pathsToLink = [ "/data/memes/planets" ];

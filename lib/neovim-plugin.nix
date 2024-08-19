@@ -36,6 +36,9 @@ with lib;
       hasSettings ? true,
       extraOptions ? { },
       # config
+      configLocation ? if isColorscheme then "extraConfigLuaPre" else "extraConfigLua",
+      # Required for plugins.flash, as it used to define config
+      skipConfigAttrs ? false,
       luaName ? name,
       setup ? ".setup",
       extraConfig ? cfg: { },
@@ -79,6 +82,31 @@ with lib;
 
           package = helpers.mkPluginPackageOption originalName defaultPackage;
         }
+        // optionalAttrs (!skipConfigAttrs) {
+          config = {
+            pre = mkOption {
+              type = types.lines;
+              default = "";
+              description = "Configuration before the initialization of ${name}";
+            };
+            post = mkOption {
+              type = types.lines;
+              default = "";
+              description = "Configuration before the initialization of ${name}";
+            };
+            init = mkOption {
+              type = types.lines;
+              internal = true;
+              default = "";
+              description = "Initialization code (between pre & post)";
+            };
+            final = mkOption {
+              type = types.str;
+              description = "Generated lua configuration for ${name}";
+              readOnly = true;
+            };
+          };
+        }
         // optionalAttrs hasSettings {
           settings = helpers.mkSettingsOption {
             description = settingsDescription;
@@ -91,15 +119,27 @@ with lib;
       config =
         let
           cfg = config.${namespace}.${name};
-          extraConfigNamespace = if isColorscheme then "extraConfigLuaPre" else "extraConfigLua";
         in
         mkIf cfg.enable (mkMerge [
           {
             extraPlugins = (optional installPackage cfg.package) ++ extraPlugins;
             inherit extraPackages;
           }
-          (optionalAttrs callSetup {
-            ${extraConfigNamespace} = ''
+          (optionalAttrs (!skipConfigAttrs) {
+            ${namespace}.${name}.config.final = ''
+              ${cfg.config.pre}
+              ${cfg.config.init}
+              ${cfg.config.post}
+            '';
+          })
+          (optionalAttrs (callSetup && !skipConfigAttrs) {
+            ${namespace}.${name}.config.init = ''
+              require('${luaName}')${setup}(${optionalString (cfg ? settings) (helpers.toLuaObject cfg.settings)})
+            '';
+            ${configLocation} = cfg.config.final;
+          })
+          (optionalAttrs (callSetup && skipConfigAttrs) {
+            ${configLocation} = ''
               require('${luaName}')${setup}(${optionalString (cfg ? settings) (helpers.toLuaObject cfg.settings)})
             '';
           })

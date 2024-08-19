@@ -37,10 +37,11 @@ helpers.neovim-plugin.mkNeovimPlugin config {
   callSetup = false;
   colorscheme = null;
   extraConfig = cfg: {
-    extraConfigLuaPre = ''
+    colorschemes.onedark.config.init = ''
       _onedark = require('onedark')
       _onedark.setup(${helpers.toLuaObject cfg.settings})
       _onedark.load()
     '';
+    extraConfigLuaPre = cfg.config.final;
   };
 }
