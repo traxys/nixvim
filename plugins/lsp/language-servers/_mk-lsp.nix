@@ -49,22 +49,7 @@ in
     plugins.lsp.servers.${name} = {
       enable = lib.mkEnableOption description;
 
-      package =
-        if lib.isOption package then
-          package
-        else if args ? package then
-          lib.mkPackageOption pkgs name {
-            nullable = true;
-            default = package;
-          }
-        else
-          # If we're not provided a package, we should provide a no-default option
-          lib.mkOption {
-            type = types.nullOr types.package;
-            description = ''
-              The package to use for ${name}. Has no default, but can be set to null.
-            '';
-          };
+      package = lib.nixvim.mkOptionalPackage pkgs name package;
 
       cmd = mkOption {
         type = with types; nullOr (listOf str);
@@ -134,7 +119,15 @@ in
   };
 
   config = lib.mkIf enabled {
-    extraPackages = [ cfg.package ];
+    extraPackages = [
+      (lib.nixvim.useOptionalPackage options config [
+        "plugins"
+        "lsp"
+        "servers"
+        name
+        "package"
+      ])
+    ];
 
     plugins.lsp.enabledServers = [
       {
