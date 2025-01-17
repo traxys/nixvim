@@ -391,6 +391,39 @@ rec {
       );
     };
 
+  mkOptionalPackage =
+    pkgs: name: package:
+    if lib.isOption package then
+      package
+    else if package != null then
+      lib.mkPackageOption pkgs name {
+        nullable = true;
+        default = package;
+      }
+    else
+      (lib.mkOption {
+        type = types.nullOr types.package;
+        description = ''
+          Package to use for ${name}.
+        '';
+      })
+      // {
+        _unpackaged = true;
+        _packageName = name;
+      };
+
+  useOptionalPackage =
+    options: config: opt:
+    let
+      def = lib.getAttrFromPath opt options;
+    in
+    if !def.isDefined && def ? _unpackaged then
+      throw ''
+        Nixvim (${lib.concatStringsSep "." opt}): No package is known for ${def._packageName}, install externally and set this option to null
+      ''
+    else
+      lib.getAttrFromPath opt config;
+
   mkAutoLoadOption =
     cfg: name:
     lib.mkOption {

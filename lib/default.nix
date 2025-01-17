@@ -62,10 +62,12 @@ lib.makeExtensible (
       mkNullOrStrLuaFnOr'
       mkNullOrStrLuaOr
       mkNullOrStrLuaOr'
+      mkOptionalPackage
       mkPackageOption
       mkPluginPackageOption
       mkSettingsOption
       pluginDefaultText
+      useOptionalPackage
       ;
 
     inherit (self.utils)
